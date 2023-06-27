@@ -163,14 +163,14 @@ const ManageUsers = () => {
 
         //check if anything changed
 
-        if (hasNotChanged) {
-          updatedUsers[index].editMode = false;
-        } else {
-          updatedUsers[index].editMode = false;
-          setUsers(updatedUsers);
-          update(id, user);
-          setInvalidEmail(id, false);
-        }
+        updatedUsers[index].editMode = false;
+        setUsers(updatedUsers);
+        update(id, user);
+        console.log("ent");
+        setInvalidUsername(id, false);
+        setInvalidEmail(id, false);
+        setInvalidRole(id, false);
+
         updatedUsers[index].editMode = false;
       } else {
         setInvalidUsername(id, false);
