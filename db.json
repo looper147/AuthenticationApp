@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "username": "Haiji",
+      "email": "Bad@gmail.com",
+      "password": "123456",
+      "role": "User",
+      "id": 1
+    },
+    {
+      "username": "Looperr",
+      "email": "Hadi@gmail.com",
+      "password": "123456",
+      "role": "Admin",
+      "id": 3
+    },
+    {
+      "username": "Hadi",
+      "email": "H@gmail.com",
+      "password": "123",
+      "role": "User",
+      "id": 4
+    },
+    {
+      "username": "Mad",
+      "email": "Mad@gmail.com",
+      "password": "123456",
+      "role": "Admin",
+      "id": 5
+    },
+    {
+      "username": "Hadii",
+      "email": "Hadi@gmail.com",
+      "password": "123456",
+      "role": "User",
+      "id": 6
+    },
+    {
+      "username": "Loop",
+      "email": "Hadii@gmail.com",
+      "password": "123456",
+      "role": "Admin",
+      "id": 7
+    }
+  ]
+}
