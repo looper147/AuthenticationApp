@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TextInput, Text } from "react-native";
-import { Card, Button, Paragraph } from "react-native-paper";
+import { Card, Button } from "react-native-paper";
 import { useAuth } from "../components/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
@@ -215,7 +215,11 @@ const ManageUsers = () => {
                       )
                     )
                   }
-                  placeholder={user.username}
+                  placeholder={
+                    user.invalidUsername
+                      ? "Please enter a userame"
+                      : user.username
+                  }
                 />
               </View>
 
@@ -236,7 +240,9 @@ const ManageUsers = () => {
                       )
                     )
                   }
-                  placeholder={user.email}
+                  placeholder={
+                    user.invalidUsername ? "Please enter an email" : user.email
+                  }
                 />
               </View>
 
@@ -257,7 +263,9 @@ const ManageUsers = () => {
                       )
                     )
                   }
-                  placeholder={user.role}
+                  placeholder={
+                    user.invalidUsername ? "Please select a role" : user.role
+                  }
                 />
               </View>
             </Card.Content>
