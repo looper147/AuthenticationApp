@@ -25,7 +25,7 @@ const ProfileScreen = () => {
   const [valid, setValid] = useState(true);
 
   const confirmChanges = async () => {
-    if (editUsername.trim()) {
+    if (editUsername.trim() && editEmail.trim()) {
       setValid(true);
 
       const changes = {

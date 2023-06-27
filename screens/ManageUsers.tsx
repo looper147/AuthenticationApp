@@ -85,7 +85,7 @@ const ManageUsers = () => {
           email: user.editEmail,
           role: user.editRole,
         };
-        await api.patch(`${API_BASE_URL}/users/${userId}`);
+        await api.patch(`${API_BASE_URL}/users/${userId}`, changes);
 
         //update user info state to keep the user rendered on update
         setUsers((prevUsers) =>

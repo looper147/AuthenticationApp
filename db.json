@@ -8,10 +8,10 @@
       "id": 2
     },
     {
-      "username": "Hussein",
-      "email": "Hussein@gmail.com",
+      "username": "Mohammad",
+      "email": "Hussein1@gmail.com",
       "password": "123456",
-      "role": "User",
+      "role": "Admin",
       "id": 3
     }
   ]
