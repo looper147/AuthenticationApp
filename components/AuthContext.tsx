@@ -1,4 +1,7 @@
-// to avoid passing props I used context
+/* to avoid passing props I used context, by using context and custom hooks other components in the app can access the 
+authentication related data and functions to update their values and do other tasks, easily shared across the app and allowing components
+to access,upate and use these values as needed,simplifies the management and sharing of authentication related data and functions
+*/
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
@@ -6,11 +9,14 @@ import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import axios from "axios";
 const API_BASE_URL = "http://192.168.0.112:3000";
 
+//axios instance with the base url
 const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
-//Authentication interceptor
+/*Authentication interceptor attached to the api, intercepts outgoing requests to attach a token to requests, including this interceptor,
+ every API request made through the api instance will automatically include the authentication token, ensuring that only authenticated users can access protected endpoints.
+validates the user's authentication status on the server side.*/
 api.interceptors.request.use(async (config) => {
   const token = await AsyncStorage.getItem("token");
   if (token) {
@@ -18,6 +24,8 @@ api.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+//create a context for authentication data and functions, basically a central sotrage
 const AuthContext = createContext({
   loggedIn: false,
   userId: 0,
@@ -47,8 +55,11 @@ interface loginCredentials {
   email: string;
   password: string;
 }
+
+//custom hook to access the created context (authentication data and functions)
 export const useAuth = () => useContext(AuthContext);
 
+//loading screen component
 const LoadingScreen = () => (
   <ActivityIndicator
     style={{ flex: 1 }}
@@ -58,7 +69,11 @@ const LoadingScreen = () => (
   />
 );
 
-export const AuthProvider = ({ children }: any) => {
+/*wraps the app and provides authentication data and functions to it's children,access the authentication data and functions from the AuthContext easily. 
+This allows components to check the user's authentication status, retrieve user information, perform authentication actions, and handle error messages without 
+having to pass props explicitly between components.*/
+export const AuthProvider = ({ children }: any, { navigation }: any) => {
+  //state variables for authentication related data
   const [loggedIn, setLoggedIn] = useState(false);
   const [userId, setUserId] = useState(0);
   const [email, setEmail] = useState("");
@@ -66,6 +81,8 @@ export const AuthProvider = ({ children }: any) => {
   const [role, setRole] = useState("");
   const [serversideErr, setServersideErr] = useState("");
   const [loading, setLoading] = useState(false);
+
+  //setters to update state variables
   const usernameSetter = (username: string) => {
     setUsername(username);
   };
@@ -82,6 +99,7 @@ export const AuthProvider = ({ children }: any) => {
   const clearServersideErr = () => {
     setServersideErr("");
   };
+
   //check if logged in when the component renders
   useEffect(() => {
     checkLoginStatus();
@@ -97,6 +115,9 @@ export const AuthProvider = ({ children }: any) => {
         //get user role
         const response = await api.get(`${API_BASE_URL}/users/user`);
         setLoading(false);
+        console.log(response);
+      } else {
+        navigation.navigate("Register");
       }
     } catch (error: any) {
       if (error.response) {
@@ -106,12 +127,15 @@ export const AuthProvider = ({ children }: any) => {
       }
     }
   };
+
+  //register a user function
   const register = async (credentials: registerCredentials) => {
     // Run the code until an error occurs
     try {
       // Send a POST request to the specified URL using axios and provide the user object as the request payload
       const response = await axios.post(`${API_BASE_URL}/users`, credentials);
       // Log the response data to the console
+      console.log(response);
       setServersideErr("");
     } catch (error: any) {
       if (error.response) {
@@ -124,6 +148,8 @@ export const AuthProvider = ({ children }: any) => {
       // Catch and handle any errors that occurred during the request
     }
   };
+
+  // log in a user function
   const login = async (credentials: loginCredentials) => {
     try {
       setLoading(true);
@@ -139,7 +165,6 @@ export const AuthProvider = ({ children }: any) => {
         setLoggedIn(true);
 
         //get role and username after successfull login
-        const token = await AsyncStorage.getItem("token");
         const responseUser = await api.get(`${API_BASE_URL}/users/user`);
 
         setUserId(responseUser.data.user.id);
@@ -158,6 +183,8 @@ export const AuthProvider = ({ children }: any) => {
       setLoading(false); //stop loading
     }
   };
+
+  //log out a user function
   const logout = async () => {
     try {
       setLoading(true);
@@ -169,6 +196,8 @@ export const AuthProvider = ({ children }: any) => {
       setLoading(false);
     }
   };
+
+  //return the provider with the provided data and functions
   return (
     <AuthContext.Provider
       value={{

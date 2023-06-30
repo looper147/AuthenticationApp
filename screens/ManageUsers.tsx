@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TextInput, Text } from "react-native";
 import { Card, Button } from "react-native-paper";
-import { useAuth } from "../components/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
@@ -25,27 +24,58 @@ interface UserInfoProps {
   password: string;
   role: string;
   editMode: boolean;
+  editUsername: string;
+  editEmail: string;
+  editRole: string;
   invalidUsername: boolean;
   invalidEmail: boolean;
   invalidRole: boolean;
+  originalUserState?: UserInfoProps; //optional field
 }
 
 const ManageUsers = () => {
-  //Authentication context
-  const { userId } = useAuth();
-
   //fetched users
   const [users, setUsers] = useState<UserInfoProps[]>([]);
 
   //handle readonly to input
-  const handleEdit = (userId: number) => {
+  const onEdit = (userId: number) => {
     setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === userId ? { ...user, editMode: !user.editMode } : user
-      )
+      prevUsers.map((user) => {
+        if (user.id === userId) {
+          // Store the original user object before toggling the editMode
+          return {
+            ...user,
+            editMode: !user.editMode,
+            originalUserState: { ...user },
+          };
+        }
+
+        return user;
+      })
     );
   };
 
+  const onCancel = (userId: number) => {
+    setUsers((prevUsers) =>
+      prevUsers.map((user) => {
+        if (user.id === userId && user.originalUserState) {
+          const { username, email, role } = user.originalUserState;
+
+          return {
+            ...user,
+            editUsername: username, //rest fields to their original values
+            editEmail: email,
+            editRole: role,
+            invalidUsername: false,
+            invalidEmail: false,
+            invalidRole: false,
+            editMode: false,
+          };
+        }
+        return user;
+      })
+    );
+  };
   // // get users
   useEffect(() => {
     // Fetch users data and update the 'users' state
@@ -157,13 +187,13 @@ const ManageUsers = () => {
         setInvalidRole(id, false);
 
         const hasNotChanged =
-          updatedUsers[index].username === user.editUsername ||
-          updatedUsers[index].email === user.editEmail ||
+          updatedUsers[index].username === user.editUsername &&
+          updatedUsers[index].email === user.editEmail &&
           updatedUsers[index].role === user.editRole;
 
         //check if anything changed
 
-        updatedUsers[index].editMode = false;
+        if (hasNotChanged) updatedUsers[index].editMode = false;
         setUsers(updatedUsers);
         update(id, user);
         console.log("ent");
@@ -195,7 +225,7 @@ const ManageUsers = () => {
                   ]}
                   editable={false}
                   value={user.id.toString()}
-                  placeholder={userId.toString()}
+                  placeholder={user.id.toString()}
                 />
               </View>
               <View style={{ flexDirection: "row" }}>
@@ -207,7 +237,8 @@ const ManageUsers = () => {
                   ]}
                   placeholderTextColor={"black"}
                   editable={user.editMode}
-                  value={user.editUsername || ""}
+                  defaultValue={user.username || ""}
+                  // value={user.editUsername || ""}
                   onChangeText={(text) =>
                     setUsers((prevUsers) =>
                       prevUsers.map((u) =>
@@ -232,7 +263,8 @@ const ManageUsers = () => {
                   ]}
                   placeholderTextColor={"black"}
                   editable={user.editMode}
-                  value={user.editEmail || ""}
+                  defaultValue={user.email || ""}
+                  // value={user.editEmail || ""}
                   onChangeText={(text) =>
                     setUsers((prevUsers) =>
                       prevUsers.map((u) =>
@@ -255,7 +287,8 @@ const ManageUsers = () => {
                   ]}
                   placeholderTextColor={"black"}
                   editable={user.editMode}
-                  value={user.editRole || ""}
+                  defaultValue={user.role || ""}
+                  // value={user.editRole || ""}
                   onChangeText={(text) =>
                     setUsers((prevUsers) =>
                       prevUsers.map((u) =>
@@ -271,9 +304,12 @@ const ManageUsers = () => {
             </Card.Content>
             <Card.Actions style={styles.actions}>
               <Button onPress={() => onDelete(user.id)}>Delete</Button>
-              <Button onPress={() => handleEdit(user.id)}>
-                {user.editMode ? "Cancel" : "Edit"}
-              </Button>
+
+              {user.editMode ? (
+                <Button onPress={() => onCancel(user.id)}>Cancel</Button>
+              ) : (
+                <Button onPress={() => onEdit(user.id)}>Edit</Button>
+              )}
 
               {user.editMode ? (
                 <Button onPress={() => onConfirm(index, user.id, user)}>

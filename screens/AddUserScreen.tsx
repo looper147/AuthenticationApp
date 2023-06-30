@@ -4,7 +4,7 @@ import { TextInput, Button, Text, RadioButton } from "react-native-paper";
 import { useAuth } from "../components/AuthContext";
 import Alert from "../components/Alert";
 
-const UserManagementScreen = () => {
+const AddUserScreen = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,8 +17,10 @@ const UserManagementScreen = () => {
   const { register, serversideErr } = useAuth();
   const [helperText, setHelperText] = useState("");
 
-  const [show, setShow] = useState(true);
+  //hide password status
+  const [hide, setHide] = useState(true);
 
+  //select role radio component
   const RolesRadio = () => {
     return (
       <View>
@@ -42,34 +44,38 @@ const UserManagementScreen = () => {
     );
   };
 
+  //on add user click
   const handleUser = () => {
-    // Define an asynchronous function called createUser that takes a user parameter
     //client side validation
-    if (!username.trim() && !email.trim() && !password.trim() && !role.trim()) {
+    const inputsAreEmpty =
+      !username.trim() && !email.trim() && !password.trim() && !role.trim();
+    const isEmpty = (input: any) => {
+      return !input.trim() ? true : false;
+    };
+    if (inputsAreEmpty) {
       setValidUsername(false);
       setValidEmail(false);
       setValidPassword(false);
-    } else if (!username.trim()) {
+    } else if (isEmpty(username)) {
       setValidUsername(false);
-    } else if (!email.trim()) {
+    } else if (isEmpty(email)) {
       setValidEmail(false);
       setValidUsername(true);
-    } else if (!password.trim()) {
+    } else if (isEmpty(password)) {
       setValidPassword(false);
       setValidUsername(true);
       setValidEmail(true);
     } else {
-      //when all inputs are validated on the client, send the request
-      //validate email format
-      const validate = (email: any) => {
+      //if no inputs are empty, validate email format
+      const validateEmail = (email: any) => {
         const expression =
           /(?!.*\.{2})^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([\t]*\r\n)?[\t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([\t]*\r\n)?[\t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
 
         return expression.test(String(email).toLowerCase());
       };
 
-      //valid email
-      if (validate(email.trim())) {
+      //if valid email
+      if (validateEmail(email.trim())) {
         setValidEmail(true);
         setHelperText("");
         setValidPassword(true);
@@ -81,6 +87,7 @@ const UserManagementScreen = () => {
           password: password,
           role: role,
         };
+        //call the register method from context to send an api request to create new user
         register(newUser);
         //reset inputs
         setUsername("");
@@ -118,8 +125,8 @@ const UserManagementScreen = () => {
           label={validPassword ? "Password" : "Please enter a password"}
           value={password}
           onChangeText={(password) => setPassword(password)}
-          secureTextEntry={show}
-          right={<TextInput.Icon icon="eye" onPress={() => setShow(!show)} />}
+          secureTextEntry={hide}
+          right={<TextInput.Icon icon="eye" onPress={() => setHide(!hide)} />}
         />
 
         {/* row 2 */}
@@ -161,4 +168,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserManagementScreen;
+export default AddUserScreen;

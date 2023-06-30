@@ -10,7 +10,7 @@ import DashboardScreen from "./screens/DashboardScreen";
 
 //navigation
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 //authentication context
 import { AuthProvider, useAuth } from "./components/AuthContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -58,7 +58,7 @@ const LoggedinTabs = () => {
           tabBarIcon: ({}) => <Icon name="profile" size={25} />,
         }}
       />
-      {role === "Admin" ? (
+      {role.trim() === "Admin" ? (
         <Tab.Screen
           component={DashboardScreen}
           name="Dashboard Main"
@@ -77,6 +77,7 @@ const AuthenticationScreens = () => {
   const { loggedIn } = useAuth();
   return loggedIn ? <LoggedinTabs /> : <LoggedOutTabs />;
 };
+
 //main rendering app
 export default function App() {
   return (

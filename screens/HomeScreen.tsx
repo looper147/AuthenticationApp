@@ -1,28 +1,32 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Appbar, Button, Card, Title, Paragraph } from "react-native-paper";
+import { Appbar, Card, PaperProvider, Title } from "react-native-paper";
 import { useAuth } from "../components/AuthContext";
+import { LogoutDialog } from "../components/LogoutDialog";
 
 const HomeScreen = () => {
-  const { logout, username } = useAuth();
+  const { username } = useAuth();
 
   return (
-    <View>
-      <Appbar.Header>
-        <Appbar.Content title="Home" />
-        <Appbar.Action icon="logout" onPress={logout} />
-      </Appbar.Header>
+    <PaperProvider>
+      <View>
+        <Appbar.Header>
+          <Appbar.Content title="Home" />
 
-      <Card>
-        <Card.Content>
-          <Title>Welcome {username}!</Title>
-        </Card.Content>
-      </Card>
+          <LogoutDialog />
+        </Appbar.Header>
 
-      <Card style={styles.card}>
-        <Card.Cover source={require("../images/image1.jpg")} />
-      </Card>
-    </View>
+        <Card>
+          <Card.Content>
+            <Title>Welcome {username}!</Title>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.card}>
+          <Card.Cover source={require("../images/image1.jpg")} />
+        </Card>
+      </View>
+    </PaperProvider>
   );
 };
 

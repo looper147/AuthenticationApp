@@ -1,19 +1,33 @@
+//json server with authentication endpoints using Nodejs
+
+//to create the server
 const jsonServer = require("json-server");
+
+//to enable cors
 const cors = require("cors");
+
+//token generation and verification
 const jwt = require("jsonwebtoken");
+
+//create the servers
 const server = jsonServer.create();
+
+//router to handle api routes
 const router = jsonServer.router("db.json");
 const middlewares = jsonServer.defaults();
 const cryptoModule = require("crypto");
 
-// Generate secret key
-
-const secretKey = cryptoModule.randomBytes(32).toString("hex");
-
-// Enable CORS
+// Enable CORS, to allow requests from different origins, from different domains
 server.use(cors());
+
+//adds default functionalitites
 server.use(middlewares);
+
+//access request data in a convenient format
 server.use(jsonServer.bodyParser);
+
+// Generate secret key to sign the tokens, ensuring integrity, the same secret key is used
+const secretKey = cryptoModule.randomBytes(32).toString("hex");
 
 //verify token function
 const verifyToken = (token) => {

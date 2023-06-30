@@ -1,18 +1,18 @@
 {
   "users": [
     {
-      "username": "Ali",
-      "email": "Ali@gmail.com",
+      "username": "hadi",
+      "email": "Hadi@gmail.com",
       "password": "123456",
-      "role": "Admin",
-      "id": 2
+      "role": "Admin ",
+      "id": 4
     },
     {
-      "username": "Mohammad",
-      "email": "Hussein1@gmail.com",
-      "password": "123456",
-      "role": "Admin",
-      "id": 3
+      "username": "ddfds",
+      "email": "hads@gmail.com",
+      "password": "123",
+      "role": "User",
+      "id": 6
     }
   ]
 }
